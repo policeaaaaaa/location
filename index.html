@@ -5,24 +5,52 @@
   <title>موقعیت شما</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    html, body { height:100%; margin:0; padding:0; }
-    #map { width:100%; height:100vh; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: sans-serif;
+      background-color: #f0f0f0;
+      text-align: center;
+    }
+    #map {
+      width: 100%;
+      height: 70vh;
+    }
+    #message {
+      font-size: 1.2rem;
+      margin-top: 20px;
+      color: #333;
+    }
+    iframe {
+      border: none;
+    }
   </style>
 </head>
 <body>
-  <div id="map">در حال ثبت موقعیت موقعیت...</div>
+  <div id="map">در حال بارگذاری نقشه...</div>
+  <div id="message"></div>
+
   <script>
-    fetch('https://ipapi.co/json/')
-      .then(r => r.json())
+    fetch("https://ipapi.co/json/")
+      .then(response => response.json())
       .then(data => {
-        const { latitude: lat, longitude: lon } = data;
-        document.getElementById('map').innerHTML = `
-          <iframe width="100%" height="${window.innerHeight}px"
-            src="https://www.google.com/maps?q=${lat},${lon}&z=12&output=embed"
-            frameborder="0"></iframe>`;
+        const lat = data.latitude;
+        const lon = data.longitude;
+
+        // نمایش نقشه
+        const iframe = document.createElement("iframe");
+        iframe.src = `https://www.google.com/maps?q=${lat},${lon}&z=14&output=embed`;
+        iframe.width = "100%";
+        iframe.height = "100%";
+        document.getElementById("map").innerHTML = "";
+        document.getElementById("map").appendChild(iframe);
+
+        // نمایش پیام بعد از بارگذاری
+        document.getElementById("message").textContent = "آدرس شما ثبت شد.";
       })
-      .catch(() => {
-        document.getElementById('map').textContent = 'خطا در دریافت موقعیت.';
+      .catch(error => {
+        document.getElementById("map").textContent = "خطا در دریافت موقعیت مکانی.";
       });
   </script>
 </body>
