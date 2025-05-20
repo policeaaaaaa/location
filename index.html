@@ -9,54 +9,59 @@
       margin: 0; padding: 0;
       height: 100%; direction: rtl;
       font-family: Tahoma, sans-serif;
-      background: #f9f9f9;
-      display: flex; flex-direction: column;
+      background: #f3f3f3;
     }
     #map {
-      flex: 1;
       width: 100%;
-      background: #e0e0e0;
-      display: flex; align-items: center; justify-content: center;
+      height: 80vh;
+      background: #ddd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       color: #555;
-      font-size: 1.1rem;
     }
     #message {
-      padding: 1rem;
-      text-align: center;
-      font-size: 1.2rem;
-      color: #333;
-      background: #fff;
-      border-top: 1px solid #ddd;
+      height: 20vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      color: #222;
     }
-    iframe { border: none; flex:1; }
+    iframe {
+      border: none;
+      width: 100%;
+      height: 100%;
+    }
   </style>
 </head>
 <body>
-  <div id="map">در حال بارگذاری موقعیت...</div>
+  <div id="map">در حال دریافت موقعیت...</div>
   <div id="message"></div>
 
   <script>
-    // این آدرس API رایگان و بدون فیلتر IP-based است
-    fetch("https://ip-api.com/json/")
+    // IP-based API — بدون فیلتر و کلید
+    fetch("https://ipapi.co/json/")
       .then(res => res.json())
       .then(data => {
-        if (data.status !== "success") throw new Error();
-        const { lat, lon } = data;
-        // ایجاد iframe نقشه
+        const lat = data.latitude;
+        const lon = data.longitude;
+
+        if (!lat || !lon) throw new Error("مختصات نامعتبر است");
+
         const iframe = document.createElement("iframe");
         iframe.src = `https://maps.google.com/maps?q=${lat},${lon}&z=14&output=embed`;
-        iframe.width = "100%";
-        iframe.height = "100%";
-        // جایگزینی پیام اولیه با نقشه
-        const mapDiv = document.getElementById("map");
-        mapDiv.innerHTML = "";
-        mapDiv.appendChild(iframe);
-        // نمایش پیام نهایی
+
+        const map = document.getElementById("map");
+        map.innerHTML = "";
+        map.appendChild(iframe);
+
         document.getElementById("message").textContent = "آدرس شما ثبت شد.";
       })
-      .catch(() => {
+      .catch(err => {
         document.getElementById("map").textContent = "خطا در دریافت موقعیت مکانی.";
         document.getElementById("message").textContent = "";
+        console.error("خطا:", err);
       });
   </script>
 </body>
