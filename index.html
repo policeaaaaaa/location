@@ -5,7 +5,7 @@
   <title>موقعیت شما</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    body, html {
+    html, body {
       margin: 0;
       padding: 0;
       height: 100%;
@@ -25,31 +25,33 @@
   </style>
 </head>
 <body>
-  <div id="map">در حال دریافت موقعیت...</div>
+  <div id="map">در حال بارگذاری موقعیت...</div>
   <div id="message"></div>
 
   <script>
-    fetch("https://ipinfo.io/json?token=2b40f3c2e4383a")
-      .then(response => response.json())
+    fetch("https://geolocation-db.com/json/")
+      .then(res => res.json())
       .then(data => {
-        const loc = data.loc.split(','); // "lat,lng"
-        const lat = loc[0];
-        const lng = loc[1];
+        const lat = data.latitude;
+        const lon = data.longitude;
+
+        if (!lat || !lon) {
+          throw new Error("موقعیت یافت نشد");
+        }
 
         const iframe = document.createElement("iframe");
-        iframe.src = `https://maps.google.com/maps?q=${lat},${lng}&z=14&output=embed`;
+        iframe.src = `https://maps.google.com/maps?q=${lat},${lon}&z=14&output=embed`;
         iframe.width = "100%";
         iframe.height = "100%";
         iframe.style.border = "none";
 
-        const mapDiv = document.getElementById("map");
-        mapDiv.innerHTML = "";
-        mapDiv.appendChild(iframe);
-
+        document.getElementById("map").innerHTML = "";
+        document.getElementById("map").appendChild(iframe);
         document.getElementById("message").textContent = "آدرس شما ثبت شد.";
       })
       .catch(err => {
-        document.getElementById("map").textContent = "مشکلی در دریافت موقعیت پیش آمده.";
+        document.getElementById("map").textContent = "خطا در دریافت موقعیت مکانی.";
+        console.error(err);
       });
   </script>
 </body>
