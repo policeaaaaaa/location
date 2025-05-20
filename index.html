@@ -1,17 +1,30 @@
 <!DOCTYPE html>
-<html lang="fa">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>مکان من</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <meta charset="UTF-8" />
+  <title>موقعیت مکانی </title>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 2em; }
+  </style>
 </head>
 <body>
-  <h1>مکان فعلی من</h1>
-  <button onclick="showLocation()">نمایش موقعیت من</button>
-  <div id="map"></div>
 
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script src="script.js"></script>
+  <script>
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const lat = pos.coords.latitude;
+          const lon = pos.coords.longitude;
+          document.getElementById('location').textContent =
+            `عرض جغرافیایی: ${lat.toFixed(6)}, طول جغرافیایی: ${lon.toFixed(6)}`;
+        },
+        (err) => {
+          document.getElementById('location').textContent = '  موقعیت مکانی ثبت شد ';
+        }
+      );
+    } else {
+      document.getElementById('location').textContent = 'مرورگر شما از Geolocation پشتیبانی نمی‌کند.';
+    }
+  </script>
 </body>
 </html>
